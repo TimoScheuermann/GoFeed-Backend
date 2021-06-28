@@ -16,13 +16,6 @@ ADD . /app
 ## directory
 WORKDIR /app
 
-## Add this go mod download command to pull in any dependencies
-RUN go mod download
-
-## we run go build to compile the binary
-## executable of our Go program
-RUN go build -o main .
-
 ## Our start command which kicks off
 ## our newly created binary executable
 CMD ["/app/main"]
