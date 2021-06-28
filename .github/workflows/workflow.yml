@@ -38,6 +38,7 @@ jobs:
 
   update:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - name: SSH and Update Docker Compose
         uses: appleboy/ssh-action@master
@@ -46,6 +47,6 @@ jobs:
           username: root
           password: ${{ secrets.SERVER_PW }}
           script: |
-          cd /root/GoFeed
-          docker compose pull
-          docker compose up -d --remove-orphans
+            cd /root/GoFeed
+            docker compose pull
+            docker compose up -d --remove-orphans
