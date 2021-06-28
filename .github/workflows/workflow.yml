@@ -48,5 +48,5 @@ jobs:
           password: ${{ secrets.SERVER_PW }}
           script: |
             cd /root/GoFeed
-            docker compose pull
-            docker compose up -d --remove-orphans
+            docker-compose pull
+            docker-compose up -d --remove-orphans
