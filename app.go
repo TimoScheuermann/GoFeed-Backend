@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"net/http"
 
@@ -49,7 +50,26 @@ func main() {
 	auth.RegisterRoutes(router)
 	message.RegisterRoutes(router)
 
-	defer log.Fatal(http.ListenAndServe(":3000", handler))
+	server := &http.Server{
+		Addr:         ":3000",
+		Handler:      handler,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	cert := "/etc/letsencrypt/live/api.timos.design/fullchain.pem"
+	key := "/etc/letsencrypt/live/api.timos.design/privkey.pem"
+
+	err := server.ListenAndServeTLS(cert, key)
+
+	if err == nil {
+		fmt.Println("Serving over https")
+	}
+
+	if err != nil {
+		fmt.Println("Serving over http")
+		defer log.Fatal(server.ListenAndServe())
+	}
 }
 
 func routerMw(next http.Handler) http.Handler {
