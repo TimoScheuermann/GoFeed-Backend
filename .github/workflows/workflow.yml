@@ -14,6 +14,7 @@ on:
       - staging
       - develop
 
+jobs:
   # The "deploy" workflow
   deploy:
     # The type of runner that the job will run on
