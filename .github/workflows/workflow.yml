@@ -70,4 +70,4 @@ jobs:
           repository: timoscheuermann/gofeed
           tag_with_ref: true
           push: true
-          tags: user/app:latest
+          tags: timoscheuermann/gofeed:latest
