@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"net/http"
@@ -18,7 +20,11 @@ import (
 func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("Error loading .env file")
+		mongo := os.Getenv("MONGO_URI")
+		if len(mongo) < 5 {
+			log.Fatal("No env set")
+		}
 	}
 }
 
