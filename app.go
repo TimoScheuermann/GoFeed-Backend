@@ -51,7 +51,7 @@ func main() {
 	message.RegisterRoutes(router)
 
 	server := &http.Server{
-		Addr:         ":3000",
+		Addr:         ":443",
 		Handler:      handler,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
@@ -67,7 +67,8 @@ func main() {
 	}
 
 	if err != nil {
-		fmt.Println("Serving over http")
+		server.Addr = ":80"
+		fmt.Printf("Serving over http due to %v", err)
 		defer log.Fatal(server.ListenAndServe())
 	}
 }
