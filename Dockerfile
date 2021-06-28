@@ -1,21 +1,15 @@
-## We specify the base image we need for our
-## go application
-FROM golang:1.12.0-alpine3.9
+# Build stage
+FROM golang:1.16-alpine3.13 AS builder
 
-## We create an /app directory within our
-## image that will hold our application source
-## files
-RUN mkdir /app
+WORKDIR /app
+COPY . .
+RUN go build -o main .
 
-## We copy everything in the root directory
-## into our /app directory
-ADD . /app
-
-## We specify that we now wish to execute
-## any further commands inside our /app
-## directory
+# Run stage
+FROM alpine:3.13
 WORKDIR /app
 
-## Our start command which kicks off
-## our newly created binary executable
+COPY --from=builder /app/main .
+
+EXPOSE 3000
 CMD ["/app/main"]
