@@ -3,7 +3,9 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -14,20 +16,15 @@ var client *mongo.Client
 
 func Connect() {
 
-	c, err := mongo.Connect(context.Background(), options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URI"))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	c, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
-		fmt.Printf("Error occured while connecting to MongoDB: %v\n", err.Error())
-		os.Exit(1)
-		return
-	}
-
-	err = c.Ping(context.Background(), nil)
-
-	if err != nil {
-		fmt.Printf("Couldn't connect to MongoDB: %v\n", err.Error())
-		os.Exit(1)
-		return
+		log.Fatal(err)
 	}
 
 	fmt.Println("Successfully connected to MongoDB")
