@@ -57,8 +57,8 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	cert := "/etc/letsencrypt/live/api.timos.design/fullchain.pem"
-	key := "/etc/letsencrypt/live/api.timos.design/privkey.pem"
+	cert := "fullchain.pem"
+	key := "privkey.pem"
 
 	err := server.ListenAndServeTLS(cert, key)
 
@@ -68,7 +68,7 @@ func main() {
 
 	if err != nil {
 		server.Addr = ":80"
-		fmt.Printf("Serving over http due to %v", err)
+		fmt.Printf("Serving over http due to %v\n", err)
 		defer log.Fatal(server.ListenAndServe())
 	}
 }
