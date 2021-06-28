@@ -40,7 +40,7 @@ func main() {
 	auth.RegisterRoutes(router)
 	message.RegisterRoutes(router)
 
-	defer log.Fatal(http.ListenAndServe("localhost:3000", handler))
+	defer log.Fatal(http.ListenAndServe(":3000", handler))
 }
 
 func routerMw(next http.Handler) http.Handler {
