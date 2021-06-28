@@ -24,6 +24,9 @@ func init() {
 		mongo := os.Getenv("MONGO_URI")
 		if len(mongo) < 5 {
 			log.Fatal("No env set")
+		} else {
+			fmt.Println("Env loaded via docker-compose")
+			fmt.Printf("Mongo URI: %v\n", mongo)
 		}
 	}
 }
