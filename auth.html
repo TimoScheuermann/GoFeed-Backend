@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Auth Token</title>
+</head>
+<body>
+    <span style="display:none" id="token">{{.Token}}</span>
+</body>
+</html>
+
+<script>
+let token = document.getElementById("token").innerHTML
+
+if(window.opener) {
+    window.opener.postMessage("token=" + token, '*');
+}
+window.close();
+self.close();
+
+document.getElementById("token").remove()
+document.getElementsByTagName("script")[0].remove()
+</script>

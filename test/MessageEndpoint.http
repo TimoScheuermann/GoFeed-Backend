@@ -1,0 +1,33 @@
+POST  http://localhost:3000/message
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXIiOiJodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvNDg5ODY1MDM_dj00IiwiZXhwIjoxNjI0NjEwMTI1LCJncm91cCI6InVzZXIiLCJpZCI6IjYwZDFiZjgyZGY5MjVmODlmNWRhZTk4MCIsImxhc3RfbG9naW4iOjE2MjQ1MjM3MjU3NTcsIm1lbWJlcl9zaW5jZSI6MTYyNDM1ODc4NjkzNSwibmFtZSI6IlRpbW8gU2NoZXVlcm1hbm4iLCJwcm92aWRlciI6ImdpdGh1YiIsInByb3ZpZGVySWQiOiI0ODk4NjUwMyJ9.-5RvcPRVw70DQvXNGzCocnIiZ58HEJO125FNJUXXcwc
+Content-Type: application/json
+
+{
+    "content": "ich werde auch gelöscht"
+}
+
+###
+
+GET http://localhost:3000/message/60d303cf7857f9dec6af90b3
+Content-Type: "application/json"
+
+
+###
+
+GET http://localhost:3000/message
+Content-Type: "application/json"
+
+###
+DELETE http://localhost:3000/message/60d303cf7857f9dec6af90b3
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXIiOiJodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvNDg5ODY1MDM_dj00IiwiZXhwIjoxNjI0NjEwMTI1LCJncm91cCI6InVzZXIiLCJpZCI6IjYwZDFiZjgyZGY5MjVmODlmNWRhZTk4MCIsImxhc3RfbG9naW4iOjE2MjQ1MjM3MjU3NTcsIm1lbWJlcl9zaW5jZSI6MTYyNDM1ODc4NjkzNSwibmFtZSI6IlRpbW8gU2NoZXVlcm1hbm4iLCJwcm92aWRlciI6ImdpdGh1YiIsInByb3ZpZGVySWQiOiI0ODk4NjUwMyJ9.-5RvcPRVw70DQvXNGzCocnIiZ58HEJO125FNJUXXcwc
+Content-Type: "application/json"
+
+###
+
+PATCH http://localhost:3000/message/60d3024837289a35c65874ae
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXIiOiJodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvNDg5ODY1MDM_dj00IiwiZXhwIjoxNjI0NjEwMTI1LCJncm91cCI6InVzZXIiLCJpZCI6IjYwZDFiZjgyZGY5MjVmODlmNWRhZTk4MCIsImxhc3RfbG9naW4iOjE2MjQ1MjM3MjU3NTcsIm1lbWJlcl9zaW5jZSI6MTYyNDM1ODc4NjkzNSwibmFtZSI6IlRpbW8gU2NoZXVlcm1hbm4iLCJwcm92aWRlciI6ImdpdGh1YiIsInByb3ZpZGVySWQiOiI0ODk4NjUwMyJ9.-5RvcPRVw70DQvXNGzCocnIiZ58HEJO125FNJUXXcwc
+Content-Type: "application/json"
+
+{
+    "content": "Neuer Inhalt"
+}
