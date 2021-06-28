@@ -57,8 +57,8 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	cert := "fullchain.pem"
-	key := "privkey.pem"
+	cert := "/etc/letsencrypt/live/api.timos.design/fullchain.pem"
+	key := "/etc/letsencrypt/live/api.timos.design/privkey.pem"
 
 	err := server.ListenAndServeTLS(cert, key)
 
