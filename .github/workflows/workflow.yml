@@ -26,5 +26,7 @@ jobs:
           password: ${{ secrets.SERVER_PW }}
           script: |
             cd /root/GoFeed-Backend
+            git stash
+            git pull
             docker-compose build
             docker-compose up -d --remove-orphans
