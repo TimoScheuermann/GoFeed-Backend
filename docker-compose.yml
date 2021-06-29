@@ -5,6 +5,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-    envionment:
+    environment:
       - VIRTUAL_HOST=go.timos.design
       - LETSENCRYPT_HOST=go.timos.design
