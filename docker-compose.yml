@@ -1,0 +1,10 @@
+version: '2'
+services:
+  go-feed:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: .
+    envionment:
+      - VIRTUAL_HOST=go.timos.design
+      - LETSENCRYPT_HOST=go.timos.design
