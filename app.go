@@ -51,26 +51,13 @@ func main() {
 	message.RegisterRoutes(router)
 
 	server := &http.Server{
-		Addr:         ":443",
+		Addr:         ":3000",
 		Handler:      handler,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	cert := "./cert/fullchain.pem"
-	key := "./cert/privkey.pem"
-
-	err := server.ListenAndServeTLS(cert, key)
-
-	if err == nil {
-		fmt.Println("Serving over https")
-	}
-
-	if err != nil {
-		server.Addr = ":80"
-		fmt.Printf("Serving over http due to %v\n", err)
-		defer log.Fatal(server.ListenAndServe())
-	}
+	defer log.Fatal(server.ListenAndServe())
 }
 
 func routerMw(next http.Handler) http.Handler {
