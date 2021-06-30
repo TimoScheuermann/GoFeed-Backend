@@ -10,6 +10,7 @@ FROM alpine:3.13
 WORKDIR /app
 
 COPY --from=builder /app/main .
+COPY auth.html .
 
 EXPOSE 3000
 CMD ["/app/main"]

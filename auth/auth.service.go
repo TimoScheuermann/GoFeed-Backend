@@ -19,14 +19,11 @@ import (
 	"github.com/markbates/goth/providers/google"
 )
 
-const sessionKey = "superDuperSicheresPW"
-const jwtSecret = "JWTsSindTollUndS1ch3r!"
-
 func RegisterOAuth() {
 
 	fmt.Println("Register OAuth")
 
-	store := sessions.NewCookieStore([]byte(sessionKey))
+	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 	store.MaxAge(86400 * 30)
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true
@@ -43,6 +40,8 @@ func RegisterOAuth() {
 func handleOAuthCallback(w http.ResponseWriter, req *http.Request) {
 	gothUser, err := gothic.CompleteUserAuth(w, req)
 
+	fmt.Printf("Goth User %v\n", gothUser)
+
 	if err != nil {
 		fmt.Fprintln(w, err)
 		return
@@ -57,9 +56,14 @@ func handleOAuthCallback(w http.ResponseWriter, req *http.Request) {
 
 	claims, _ := sjwt.ToClaims(user)
 	claims.SetExpiresAt(time.Now().Add(time.Hour * 24))
-	jwt := claims.Generate([]byte(jwtSecret))
+	jwt := claims.Generate([]byte(os.Getenv("JWT_SECRET")))
 
-	t, _ := template.ParseFiles("auth.html")
+	t, err := template.ParseFiles("auth.html")
+
+	if err != nil {
+		fmt.Fprintln(w, err)
+		return
+	}
 	t.Execute(w, JwtToken{jwt})
 
 }
@@ -81,7 +85,7 @@ func AuthMiddleware(next http.HandlerFunc, groups []string) http.HandlerFunc {
 
 			if len(bearerToken) == 2 {
 				jwt := bearerToken[1]
-				if verified := sjwt.Verify(jwt, []byte(jwtSecret)); verified {
+				if verified := sjwt.Verify(jwt, []byte(os.Getenv("JWT_SECRET"))); verified {
 					claims, err := sjwt.Parse(jwt)
 
 					if err == nil {
