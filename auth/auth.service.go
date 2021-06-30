@@ -30,7 +30,7 @@ func RegisterOAuth() {
 	store.MaxAge(86400 * 30)
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true
-	store.Options.Secure = false
+	store.Options.Secure = strings.HasPrefix(os.Getenv("CALLBACK"), "https")
 
 	gothic.Store = store
 
