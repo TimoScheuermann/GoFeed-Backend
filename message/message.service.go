@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/mitchellh/mapstructure"
@@ -105,8 +106,11 @@ func postMessage(w http.ResponseWriter, req *http.Request) {
 	var message Message
 	json.NewDecoder(req.Body).Decode(&message)
 
-	if len(message.Content) <= 0 {
-		printError(w, "Please provide a content")
+	validate := validator.New()
+	err := validate.Struct(message)
+
+	if err != nil {
+		printError(w, "Bitte gib eine Nachricht ein")
 		return
 	}
 
@@ -160,8 +164,11 @@ func patchMessage(w http.ResponseWriter, req *http.Request) {
 	var message Message
 	json.NewDecoder(req.Body).Decode(&message)
 
-	if len(message.Content) <= 0 {
-		printError(w, "Please provide a content")
+	validate := validator.New()
+	err = validate.Struct(message)
+
+	if err != nil {
+		printError(w, "Bitte gib eine Nachricht ein")
 		return
 	}
 

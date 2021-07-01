@@ -7,7 +7,7 @@ type Message struct {
 	AuthorID  primitive.ObjectID `json:"authorId,omitempty" bson:"authorId,omitempty"`
 	Created   int64              `json:"created,omitempty" bson:"created,omitempty"`
 	Updated   int64              `json:"updated,omitempty" bson:"updated,omitempty"`
-	Content   string             `json:"content,omitempty" bson:"content,omitempty"`
+	Content   string             `json:"content,omitempty" bson:"content,omitempty" validate:"required,gt=0"`
 }
 
 type Exception struct {
