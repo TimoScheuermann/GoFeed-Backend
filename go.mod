@@ -3,6 +3,9 @@ module gofeed-go
 go 1.16
 
 require (
+	github.com/ambelovsky/go-structs v1.1.0 // indirect
+	github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109 // indirect
+	github.com/ambelovsky/gosf-socketio v0.0.0-20201109193639-add9d32f8b19 // indirect
 	github.com/brianvoe/sjwt v0.5.1
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible // indirect

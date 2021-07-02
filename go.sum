@@ -35,6 +35,12 @@ cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+github.com/ambelovsky/go-structs v1.1.0 h1:LXj4/mHnYw0qhXQhOo96+ULGQ88H8qMcZd5SHef8boY=
+github.com/ambelovsky/go-structs v1.1.0/go.mod h1:zN3RBXQvxgjjq/Q/WZS7p5AEK+qC9mNg7ycnvoQ63Ak=
+github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109 h1:Tp8GVfUOEmJftBqi4+/aXTwJzm24POo6wIHeuTqaT+Y=
+github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109/go.mod h1:MUREokfMKREm1fOm2babarrkYdk/dGHWY+ITC3qHHPQ=
+github.com/ambelovsky/gosf-socketio v0.0.0-20201109193639-add9d32f8b19 h1:suVCm9PiIhz7ftTbWQNe7u2YjVfr8AEuUiNWKWApdMM=
+github.com/ambelovsky/gosf-socketio v0.0.0-20201109193639-add9d32f8b19/go.mod h1:o0+8DH+3X+FEOgSdNud0+8jJAsjtR9H3hF+O10Zcj/c=
 github.com/aws/aws-sdk-go v1.34.28 h1:sscPpn/Ns3i0F4HPEWAVcwdIRaZZCuL7llJ2/60yPIk=
 github.com/aws/aws-sdk-go v1.34.28/go.mod h1:H7NKnBqNVzoTJpGfLrQkkD+ytBA93eiDYi/+8rV9s48=
 github.com/brianvoe/sjwt v0.5.1 h1:OKwnUrrVMnP81N9S5+ylgZECUEwW4Uw6W6J0FgcIZfw=

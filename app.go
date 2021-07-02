@@ -12,7 +12,6 @@ import (
 	"gofeed-go/auth"
 	"gofeed-go/database"
 	"gofeed-go/message"
-	"gofeed-go/socket"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -50,10 +49,11 @@ func main() {
 
 	auth.RegisterRoutes(router)
 	message.RegisterRoutes(router)
-	router.Handle("/socket/", socket.SocketServer)
+
+	// router.Handle("/socket", socket.SocketServer)
 
 	server := &http.Server{
-		Addr:         ":3000",
+		Addr:         "localhost:3000",
 		Handler:      handler,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
