@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gofeed-go/auth"
 	"gofeed-go/database"
+	"gofeed-go/socket"
 	"net/http"
 	"strconv"
 	"time"
@@ -128,6 +129,9 @@ func postMessage(w http.ResponseWriter, req *http.Request) {
 
 	if oid, ok := result.InsertedID.(primitive.ObjectID); ok {
 		created := getMessageById(oid.Hex())
+
+		socket.SocketServer.BroadcastToRoom("", "clients", "post", created)
+
 		json.NewEncoder(w).Encode(created)
 	}
 }
@@ -149,6 +153,8 @@ func deleteMessage(w http.ResponseWriter, req *http.Request) {
 		printError(w, "Message not found")
 		return
 	}
+
+	socket.SocketServer.BroadcastToRoom("", "clients", "post:delete", messageId)
 
 	json.NewEncoder(w).Encode(Exception{"Message deleted"})
 }
@@ -186,5 +192,8 @@ func patchMessage(w http.ResponseWriter, req *http.Request) {
 	}
 
 	updated := getMessageById(messageId.Hex())
+
+	socket.SocketServer.BroadcastToRoom("", "clients", "post", updated)
+
 	json.NewEncoder(w).Encode(updated)
 }
