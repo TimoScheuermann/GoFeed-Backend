@@ -53,7 +53,7 @@ func main() {
 	// router.Handle("/socket", socket.SocketServer)
 
 	server := &http.Server{
-		Addr:         "localhost:3000",
+		Addr:         ":3000",
 		Handler:      handler,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
