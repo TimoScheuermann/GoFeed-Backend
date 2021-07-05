@@ -1,0 +1,14 @@
+GET http://localhost:3000
+
+###
+
+GET http://localhost:3000/60e2c867dc77d26f214ae9b5
+
+###
+
+POST http://localhost:3000
+Content-Type: application/json
+
+{
+    "message": "Hallo Welt!"
+}
