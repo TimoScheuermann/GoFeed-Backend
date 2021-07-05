@@ -19,6 +19,9 @@ import (
 	"github.com/markbates/goth/providers/google"
 )
 
+/**
+ * Regiser oAuth Providers
+ */
 func RegisterOAuth() {
 
 	fmt.Println("Register OAuth")
@@ -31,13 +34,18 @@ func RegisterOAuth() {
 
 	gothic.Store = store
 
+	// Providers used for GoFeed
 	goth.UseProviders(
 		google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"), os.ExpandEnv("${CALLBACK}/auth/google/callback"), "profile"),
 		github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"), os.ExpandEnv("${CALLBACK}/auth/github/callback"), "user:name"),
 	)
 }
 
+/**
+ * Get called after successfull sign in on provider
+ */
 func handleOAuthCallback(w http.ResponseWriter, req *http.Request) {
+	// extract user from request
 	gothUser, err := gothic.CompleteUserAuth(w, req)
 
 	fmt.Printf("Goth User %v\n", gothUser)
@@ -47,6 +55,7 @@ func handleOAuthCallback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// register or update existing user in db
 	user := UserSignedIn(gothUser)
 
 	if user == nil {
@@ -54,6 +63,7 @@ func handleOAuthCallback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// generate jwt
 	claims, _ := sjwt.ToClaims(user)
 	claims.SetExpiresAt(time.Now().Add(time.Hour * 24))
 	jwt := claims.Generate([]byte(os.Getenv("JWT_SECRET")))
@@ -64,62 +74,74 @@ func handleOAuthCallback(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintln(w, err)
 		return
 	}
+	// parse jwt to auth.html
 	t.Execute(w, JwtToken{jwt})
 
 }
 
-func contains(arr []string, str string) bool {
-	for _, a := range arr {
-		if a == str {
-			return true
+/**
+ * This function is used for every endpoint, where its required
+ * for the user be signed in (e.g. Edit-Post, Create-Post, Delete-Post).
+ *
+ * This function acts as a middleware and calls the handlerFunction after
+ * a successfull authentisation
+ */
+func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+		// Extract Auth Header and check if it exists
+		authHeader := req.Header.Get("Authorization")
+		if authHeader == "" {
+			unauthorized(w, "No authorization header set")
+			return
 		}
-	}
-	return false
+
+		// Check if bearer token is set inside auth header
+		bearerToken := strings.Split(authHeader, " ")
+		if len(bearerToken) != 2 {
+			unauthorized(w, "No bearer token set")
+			return
+		}
+
+		// extract jwt from bearer and verify signature
+		jwt := bearerToken[1]
+		verified := sjwt.Verify(jwt, []byte(os.Getenv("JWT_SECRET")))
+
+		if !verified {
+			unauthorized(w, "Invalid JWT")
+			return
+		}
+
+		// extract jwt data
+		claims, err := sjwt.Parse(jwt)
+		if err == nil {
+			err = claims.Validate()
+		}
+
+		if err != nil {
+			unauthorized(w, err.Error())
+			return
+		}
+
+		// map jwt data to User struct
+		var user User
+		claims.ToStruct(&user)
+
+		// set user in context to extract later
+		// used to store authorId within message object
+		context.Set(req, "user", user)
+
+		if next != nil {
+			next(w, req)
+		}
+	})
 }
 
-func AuthMiddleware(next http.HandlerFunc, groups []string) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		authHeader := req.Header.Get("Authorization")
-		if authHeader != "" {
-			bearerToken := strings.Split(authHeader, " ")
-
-			if len(bearerToken) == 2 {
-				jwt := bearerToken[1]
-				if verified := sjwt.Verify(jwt, []byte(os.Getenv("JWT_SECRET"))); verified {
-					claims, err := sjwt.Parse(jwt)
-
-					if err == nil {
-						err = claims.Validate()
-					}
-
-					if err != nil {
-						w.WriteHeader(http.StatusUnauthorized)
-						w.Header().Add("content-type", "application/json")
-						json.NewEncoder(w).Encode(Exception{Message: err.Error()})
-						return
-					}
-
-					var user User
-					claims.ToStruct(&user)
-
-					if groups != nil && !contains(groups, user.Group) {
-						w.WriteHeader(http.StatusUnauthorized)
-						w.Header().Add("content-type", "application/json")
-						json.NewEncoder(w).Encode(Exception{Message: "Not allowed"})
-						return
-					}
-
-					context.Set(req, "user", user)
-
-					if next != nil {
-						next(w, req)
-					}
-					return
-				}
-			}
-		}
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Header().Add("content-type", "application/json")
-		json.NewEncoder(w).Encode(Exception{Message: "An authorization header is required"})
-	})
+/**
+ * This function sends an unauthorized exception to the requester
+ */
+func unauthorized(w http.ResponseWriter, reason string) {
+	w.WriteHeader(http.StatusUnauthorized)
+	w.Header().Add("content-type", "application/json")
+	json.NewEncoder(w).Encode(Exception{reason})
 }

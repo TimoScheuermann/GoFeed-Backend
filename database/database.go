@@ -11,9 +11,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Datbase is exported (capitalized) to later be used by
+// the auth and message module
 var Database *mongo.Database
-var client *mongo.Client
 
+/**
+ * Gets called in the main function
+ * opens a connection to the database
+ */
 func Connect() {
 
 	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URI"))
@@ -29,12 +34,5 @@ func Connect() {
 
 	fmt.Println("Successfully connected to MongoDB")
 
-	client = c
 	Database = c.Database("gofeed-go")
-}
-
-func Disconnect() {
-	if client != nil {
-		client.Disconnect(context.Background())
-	}
 }

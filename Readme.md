@@ -6,6 +6,8 @@
 * Hintergrundwissen
 * Ein einfaches Beispiel
 * Wie funktioniert die Anwendung
+* Herausforderungen
+* Weitere persönliche Erfahrungen mit Go
 * Finale Bewertung von Go als Sprache für Webservices
 
 ---
@@ -393,14 +395,59 @@ ausführen und zu [http://localhost:3000](http://localhost:3000) navigieren, sol
 
 ## Wie funktioniert die Anwendung?
 
-Im Prinzip ist sie ähnlich aufgebaut wie in unserem Beispiel. Allerdings wurde der besseren Lesbarkeit auf eine einzelne Go-Datei verzichtet und dafür einzelne Pakete für die Datenbank, Nachrichten und Authentisierung erstellt.
+Im Prinzip ist sie ähnlich aufgebaut wie in unserem Beispiel. Allerdings wurde für eine bessere Lesbarkeit auf eine einzelne Go-Datei verzichtet und dafür einzelne Pakete für die Datenbank, Nachrichten und Authentisierung erstellt.
 
 Das Nachrichten Paket hat hier noch zusätzliche Validierer und Filter optionen wie limit und skip bei GET All Anfragen.
 
-## TODOS:
+Möchte ein Nutzer sich anmelden so offnet sich im Frontend ein neues Fenster mit der URL ".../auth/PROVIDER" Provider kann hier Google oder GitHub sein.
 
-- warum
-- wie
-- was so nice
-- eigene erfahrungen (letztes WE)
-- Code kommentieren ^^
+Das Lesen, Löschen und Ändern der Nachrichten gelingt mittels REST-Schnittstelle
+
+---
+
+## Herausforderungen
+Die größte Herausforderung war bereits zu Beginn klar. Ich muss eine neue Sprache lernen und mich mit der Syntax von C vertraut machen. Da ich bereits Sprachen wie PHP, Java, JavaScript und TypeScript behersche, war dies jedoch recht einfach.
+
+Weitere Probleme kamen immer wieder während der Entwicklung auf. So gab es Probleme mit den CORs wodurch ich die Schnittstellen lokal zwar super aufrufen und nutzen konnte, gehostet jedoch nie durchkam. Dieses Problem konnte ich jedoch mit Hilfe eines externen Pakets ([github.com/rs/cors](github.com/rs/cors)) lösen.
+
+Ein weiteres Problem hatte ich beim import lokaler Pakete. Dies war mehr ein Verständnis Problem und weniger ein technisches Problem. Beim Import ist zu beachten, dass immer der komplette Pfad angegeben werden muss. Im Vergleich hierzu versuchte ich zunächst den herkömmlichen Weg von JavaScript zu verwenden, indem ich als Pfad lediglich ./\<packageName> angab. In Go muss jedoch der komplette Pfad angegeben werden: \<moduleName>/\<packageName>
+
+Für das Deployment nutzte ich schließlich Docker. Docker kannte ich nur aus der Uni und auch nur flüchtig. Selbst damit gearbeitet hatte ich bis zu diesem Zeitpunkt damit noch nicht. Um die Anwendung zu Dockerizen musste ein Dockerfile geschrieben werden. Dieses baut einerseits die Anwendung, installiert hierfür die benötigten Module und kopiert im Anschluss alle notwedigen Dateien. Wenn ich die Bundlesize vergleiche, ist mir aufgefallen, dass diese sehr viel kleiner ist und ich somit auch Speicherplatz auf meinem Server einspeichern konnte (Vgl. Node.js)
+
+Das Bauen, Publishen, Fetchen und Reloaden wurde alles von einer einzelnen GitHub Action gelöst. Hierin bestand dann auch das nächste Problem: Wie schreibe ich eine GitHub Action?
+Hierzu gabs einige nützlichen Ressourcen im Internet, auch speziell für Go.
+
+Nun blieb noch ein einziges Problem offen: TLS/SSL.
+Wenn die Anwendung nur lokal oder im Firmennetz laufen würde, wäre dies nicht besonders kritisch. Da dies aber nicht der Fall war und die Anwendung für die Anmeldung oAuth verwendet (SSL notwendig), musste dieses Problem schließlich auch noch gelößt werden.
+Im Endeffekt ging es so aus, dass ich nginx und Docker auf dem Server installiert habe. Nginx war hierbei mein Proxy, welcher sich um SSL kümmert und die Anfragen auf einen bestimmten Pfad oder eine bestimmte subdomain mittels reverse proxy intern umleitet. Dadurch lief Go seöbst intern nur mit HTTP nach außen mittles nginx jedoch über HTTPS. Auch hierfür gab es auf digitalocean einige hilfreiche Anleitungen um nginx mit ssl und docker zu verwenden.
+
+Um die Anwendung schließlich auf dem Server zu starten war eine docker-compose.yml notwendig. Diese beschreibt den Prozess (Name, Port) und gibt an welches Dockerimage verwendet werden soll. Hierdurch konnte in der GitHub Action zum Fetchen und Neustarten einfach ein update gepullt werden und der Prozess neugestartet werden.
+
+Da ich bis hier aber allerdings schon sehr viel neues gelernt hatte und zufrieden mit dem Gesamtprozess war, habe ich auf einen Einsatz von Kubernetes verzichtet. Beim persönlichen Testen der Downtime habe ich keine großen Zeitspannen festgestellt, was allerdings auch an der Schlankheit der Testanwendung liegen kann.
+
+---
+
+## Weitere persönliche Erfahrungen mit Go
+Nachdem ich den ersten fertigen prototypen inklusive CI/CD Donnerstags fertiggestellt hatte und Freitags ausgiebig testen und bewerten konnte, habe ich angefangen für private Projekte im Backend auf Go zu setzen. Ich war erstaunt wie viel ich in den 2 Wochen mit Go bereits gelernt hatte und ohne Hilfe erneut wiedergeben konnte. Ich hab mich also rangesetzt und für jeden Service eine eigene kleine Go Anwendung, inkl. Dockerfile und CI/CD geschrieben.
+
+Nachdem ich mir eine einheitliche Grundstruktur ausgedacht hatte, war der Rest super fix fertig. Ich bin hier mal gespannt wo mich das ganze hinbringt und was ich dabei noch alles lernen werde. Aber zum jetzigen Stand scheint es so, als würde ich nun statt auf NestJS auf Go setzen. Dies hat mehrer Gründe. Es ist super einfach eine Go-Anwendung zu Dockerizen und publishen, die CI/CD Pipeline ist extrem simpel und leicht zu verstehen. Gerade die Schnelligkeit von Go (kompilierte Sprache) und Nebenläufigkeiten machen Go zu einer idealen Sprache für Webservices.
+
+Persönlich war ich überrascht wie viele Community-Packages es bereits gibt und wie einfach und schnell diese integriert werden können. Wenn ich die Zeit vergleiche, in der ich oAuth in meine NestJS Anwendungen eingebaut habe und wie lange das gedauert hat, war es in Go eine Sache von zehn Minuten.
+
+---
+
+## Finale Bewertung von Go als Sprache für Webservices
+
+Nach meinen ausgiebigen Wochen mit Go muss ich sagen, dass ich echt überrascht bin, wie schnell man es lernen kann und wie schnell man damit Erfolge erzielt. Es ist für mich definitiv zu einer alternative für Webservices geworden, wenn nicht sogar to Go-To-Sprachen für Webservices.
+
+In Anbetracht für einen späteren Einsatz in der SV Informatik muss ich sagen, dass es irgendwann in IV zum Einsatz für COR kommen kann! Hierfür sprechen viel zu viele positive Aspekte. Spannend wäre hier auch zu untersuchen, wie viel des bisherigen Codes möglicherweise ganz einfach in Go umgeschrieben werden kann, da der Syntax zu C sehr ähnlich (wenn nicht sogar gleich) ist.
+
+Gleichzeitig bietet dies auch die Möglichkeit SVI-Interne Go-Packages zu schreiben, welche von anderen Services genutzt werden können. Beispielsweise ein Formelmodul, o.ä.. Dies könnten dann über go get gitea.svi (o.ä.) eingebunden und genutzt werden.
+
+Da ich für den Prototyen Docker und GitHub Actions verwendet habe, bleibt die Untersuchung des Deployments mittels OpenShift offen. Hierzu gibt es allerdings auch schon ein offizielles Repo von OpenShift wie man Go-Anwendungen deployen kann. Dieses ist [hier](https://github.com/openshift/golang-ex) zu finden.
+
+---
+
+Bei Rückfragen stehe ich (Timo Scheuermann) gerne und jederzeit zur Verfügung.
+
+Das verwendete Dockerfile und der verwendete Workflow befinden sich ebenfalls in diesem Repo.
