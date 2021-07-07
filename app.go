@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -8,13 +10,15 @@ import (
 
 	"net/http"
 
-	"gofeed-go/auth"
-	"gofeed-go/database"
-	"gofeed-go/message"
+	"gofeed-go/persistence"
+	"gofeed-go/service"
+	"gofeed-go/transport"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // load env variables
@@ -37,16 +41,28 @@ func init() {
  */
 func main() {
 
-	// Register oAuth Providers
-	auth.RegisterOAuth()
-
 	// Connect to Database
-	database.Connect()
+	db := conntectToDB()
 
 	// Create Router
 	router := mux.NewRouter()
 	router.Use(routerMw)
 	router.StrictSlash(true)
+
+	// Auth Module
+	as := service.NewAuthService()
+
+	// User Module
+	ur := persistence.NewUserPersistor(db.Collection("user"))
+	us := service.NewUserService(ur)
+	ut := transport.NewUserController(us, as)
+	ut.RegisterRoutes(router)
+
+	// Message Module
+	mr := persistence.NewMessagePersistor(db.Collection("message"))
+	ms := service.NewMessageService(mr)
+	mt := transport.NewMessageController(ms, as)
+	mt.RegisterRoutes(router)
 
 	// Enable CORs
 	handler := cors.New(cors.Options{
@@ -54,10 +70,6 @@ func main() {
 		AllowedHeaders: []string{"Authorization", "Content-Type", "Origin"},
 		AllowedMethods: []string{"POST", "GET", "DELETE", "PATCH", "OPTIONS"},
 	}).Handler(router)
-
-	// Register Routes
-	auth.RegisterRoutes(router)
-	message.RegisterRoutes(router)
 
 	// Configure server
 	server := &http.Server{
@@ -83,4 +95,22 @@ func routerMw(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+func conntectToDB() *mongo.Database {
+
+	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URI"))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	c, err := mongo.Connect(ctx, clientOptions)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Successfully connected to MongoDB")
+
+	return c.Database("gofeed-go")
 }
